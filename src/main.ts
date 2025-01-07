@@ -1,24 +1,22 @@
-import './style.css'
-import typescriptLogo from './typescript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.ts'
+import { bootstrapCameraKit } from "@snap/camera-kit";
 
-document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://www.typescriptlang.org/" target="_blank">
-      <img src="${typescriptLogo}" class="logo vanilla" alt="TypeScript logo" />
-    </a>
-    <h1>Vite + TypeScript</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite and TypeScript logos to learn more
-    </p>
-  </div>
-`
+// API Token
+// Group ID 2aa5e7f8-0284-4a55-94a7-7af387ced334
+// Lens Id 1f75380a-c1ad-4137-94fe-4b6b0ea9674b
+(async function() {
+  const cameraKit = await bootstrapCameraKit({ apiToken: 'eyJhbGciOiJIUzI1NiIsImtpZCI6IkNhbnZhc1MyU0hNQUNQcm9kIiwidHlwIjoiSldUIn0.eyJhdWQiOiJjYW52YXMtY2FudmFzYXBpIiwiaXNzIjoiY2FudmFzLXMyc3Rva2VuIiwibmJmIjoxNzI1OTk1ODg4LCJzdWIiOiJmZTBlYTZkNS0wNjkyLTQ3MGEtYmVlNi1kNDQ1NDkyY2ZhNzd-U1RBR0lOR34zNTMzYzE1Ny1lZTM1LTRjNGYtYmVjZC0xODgwZGY1NTlmODcifQ.ljYneRMTS0ujT7H6VcPC-3Mw3gAa8zqx4XDzoOLhNv8'})
+  const liveRenderTarget = document.getElementById('canvas') as HTMLCanvasElement;
+  const session = await cameraKit.createSession({ liveRenderTarget });
+  const mediaStream = await navigator.mediaDevices.getUserMedia ({ video: true });
 
-setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
+  await session.setSource(mediaStream);
+
+  await session.play();
+
+  const lens = await cameraKit.lensRepository.loadLens (
+    '1f75380a-c1ad-4137-94fe-4b6b0ea9674b',
+    '2aa5e7f8-0284-4a55-94a7-7af387ced334'
+  );
+
+  await session.applyLens(lens);
+})();
