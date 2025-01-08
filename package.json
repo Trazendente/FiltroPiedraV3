@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build && rimraf docs && mv dist docs",
+    "build": "tsc && vite build && if exist docs rmdir /s /q docs && move dist docs",
     "preview": "vite preview"
   },
   "devDependencies": {
